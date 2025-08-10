@@ -11,8 +11,7 @@ spe_M2 <- spe[, spe$celltype %in% c("M2")]
 
 
 
-# Normalization and Batch correction  ================================================----
-
+# Normalization and Batch correction   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # 1. Predefined some functions for calculating silhoutte and Kbet score
 
 #Silhoutte function: calculate the silhouette score, a measure of how well data points are clustered or separated according to batch labels.
@@ -199,7 +198,7 @@ for (i in 1:length(WantedVariable)){
 write.csv(WantedVariable_df,file = "WantedVariable_df.csv")
 
 
-# 6. Select your parameters (Action required for user): overall rank to identify the best performing parameter combination
+# 6. Select optimized parameters (Action required for user): overall rank to identify the best performing parameter combination
 
 # merge results of wanted variable and unwanted variable
 merge_res <- cbind.data.frame(unwantedVariable_df,WantedVariable_df)
@@ -213,7 +212,7 @@ write.csv(merge_res,file = "merge_res.csv")
 
 
 
-# RUV-4 batch correction (optimized parameter: CPM-nNCG_2500-k_4 )    ================================================================--------
+# RUV-4 batch correction (using optimized parameters: CPM-nNCG_2500-k_4 )     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 unwantedVariable <- c("sample_quality") 
 WantedVariable <- c("Group") 
 
@@ -240,7 +239,7 @@ spe@colData$sample_quality <- as.character(spe@colData$sample_quality)
 tmp_spe@colData$sample_quality <- as.character(tmp_spe@colData$sample_quality)
 
 
-# Batch correction visualization  =========================================================================================
+# Batch correction visualization   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #1) PCA
 
 #PCA for raw data
@@ -385,7 +384,7 @@ ggsave("/bmbl_data/qujia/GeoMX/CTCL/batch_correction/RLEplot/adj.RLE_sample_qual
 
 
 
-# Similarity statistics plot for evaluating batch correction ================================================================--------
+# Similarity statistics plot for evaluating batch correction    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' Calculate statistics for evaluating batch correction
 computeClusterEvalStats <- function(spe_object, foiColumn, precomputed = NULL,
                                     n_dimension = c(1, 2), assay = 2) {
