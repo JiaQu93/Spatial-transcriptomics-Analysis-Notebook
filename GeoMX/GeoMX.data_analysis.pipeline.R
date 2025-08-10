@@ -1,5 +1,8 @@
-# nolint: line_length_linter
-# Load the packages ----------------------------------------------------------
+# The ‘standR’ package can not be installed in OSC, so run the pipeline locally.
+# This is a GeoMX data analysis pipeline: including load data, construct the GeoMX (Spatial Experiment) object, check data, QC, normalization & batch correction, differential expression analysis, and downstream analysis
+
+
+# Loading packages   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install(version = "3.20")
@@ -33,7 +36,7 @@ install.packages('readxl')
 install.packages('msigdb')
 install.packages("ggvenn")
 
-# Load the environment  ----------------------------------------------------------
+# Load environment   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 library(devtools)
 library(standR)
 library(SpatialExperiment)
@@ -61,12 +64,13 @@ library(grid)
 library(msigdbr)
 library(fgsea)
 
-# Load data  ----------------------------------------------------------
-setwd("/bmbl_data/qujia/GeoMX/CTCL")
-
 set.seed(100)
 
-# Construct the GeoMX (Spatial Experiment) object 
+# Load data  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+setwd("/bmbl_data/qujia/GeoMX/CTCL")
+
+
+# Construct the GeoMX (Spatial Experiment) object   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 sampleAnnoFile <- read_excel('/bmbl_data/qujia/GeoMX/CTCL/CTCL_data/ProbeQC.xlsx',sheet = "SegmentProperties")  %>% as.data.frame()
 countFile <- read_excel('/bmbl_data/qujia/GeoMX/CTCL/CTCL_data/ProbeQC.xlsx',sheet = "TargetCountMatrix")  %>% as.data.frame()
 #row.names(countFile) <- countFile[,1]
@@ -89,15 +93,9 @@ spe@colData$patientID <- as.character(spe@colData$patientID)
 spe@colData$Disease <- as.character(spe@colData$Disease)
 #spe@colData$sample_quality <- as.character(spe@colData$sample_quality) (dont set as.character for RUV4 bacth correction)
 
-
-
 #tmp_spe_tumor <- tmp_spe[, tmp_spe$celltype == "Tumor"]
 #spe_M1 <- spe[, spe$celltype == "M1"]
 #spe_M2 <- spe[, spe$celltype == "M2"]
-
-
-
-
 
 # Note 1: By default, the readGeoMx function will look for the gene name column in both the countFile and featureAnnoFile 
 # with the column name of "TargetName", and the sample name column in the sampleAnnoFile with the column name of "SegmentDisplayName", 
@@ -106,7 +104,7 @@ spe@colData$Disease <- as.character(spe@colData$Disease)
 
 
 
-# Check data  ----------------------------------------------------------
+# Check data    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # check count table
 assayNames(spe)
@@ -124,7 +122,7 @@ colData(spe)$QCFlags
 #countFile<-countFile[,-1]
 
 
-# QC  ------------------------------------------------------------------
+# QC    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #sample level QC
 #plotSampleInfo(spe, column2plot = c("patientID","SegmentLabel"))
 
@@ -178,7 +176,7 @@ print(pca_Group)
 
 
 
-# Normalization and Batch correction (CPM.nNCG_2500.k_3)(Identify the optimized parameters for normalization by file "GeoMX.data_batch.correction.R") ----------------------
+# Normalization and Batch correction (CPM.nNCG_2500.k_3)(Identify the optimized parameters for normalization by file "GeoMX.data_batch.correction.R")   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 unwantedVariable <- c("sample_quality") 
 WantedVariable <- c("Best_Response") 
 
@@ -209,7 +207,7 @@ write.csv(
 
 
 
-# Differential expression analysis with limma-voom pipeline ----------------------------------------
+# Differential expression analysis with limma-voom pipeline   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 setwd('/bmbl_data/qujia/GeoMX/pipeline/lymphnode/DE.results')
 # check the weight matrix used in next linear model(the weight matrix generated from batch correction should be included as covariate)
@@ -281,7 +279,7 @@ deg_list_BvT<-read.csv("/bmbl_data/qujia/GeoMX/pipeline/lymphnode/DE.results/deg
 
 
 
-# Venn plot of DEGs --------------------------------
+# Venn plot of DEGs   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 BvT_DEG_cb <- read.csv("/bmbl_data/qujia/GeoMX/pipeline/lymphnode/DE.results/BvT_DEG_cb.csv")
 BvT_DEG_lm <- read.csv("/bmbl_data/qujia/GeoMX/pipeline/lymphnode/DE.results/BvT_DEG_lm.csv")
 BvT_DEG_raw <- read.csv("/bmbl_data/qujia/GeoMX/pipeline/lymphnode/DE.results/BvT_DEG_raw.csv")
